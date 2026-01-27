@@ -47,6 +47,29 @@ sections:
           4. Document the decision and any constraints it imposes
           
           If none, state "N/A - Greenfield project"
+      - id: tech-preset
+        title: Tech Preset Selection
+        instruction: |
+          AIOS provides pre-defined architecture presets for common technology stacks.
+          Check available presets in: .aios-core/data/tech-presets/
+
+          Available presets:
+          - **nextjs-react**: Next.js 14+ with React, TypeScript, Tailwind, Zustand, React Query
+            - Includes: 5 Essential Design Patterns (Contract, Service, Repository, Event Bus, Builder)
+            - Best for: Fullstack web apps, SaaS, E-commerce, Dashboards
+
+          If a matching preset exists:
+          1. Load the preset file for detailed patterns and standards
+          2. Use the preset's project structure as the baseline
+          3. Adapt the preset's tech stack to project requirements
+          4. Reference the preset throughout this document
+
+          If no matching preset exists:
+          1. Note which preset would be closest
+          2. Document deviations needed
+          3. Consider creating a new preset after project completion
+
+          Document the preset choice: "Using [preset-name] preset" or "Custom architecture (no preset)"
       - id: changelog
         title: Change Log
         type: table

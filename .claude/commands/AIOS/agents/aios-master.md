@@ -160,6 +160,9 @@ commands:
     description: 'Break document into parts'
   - name: document-project
     description: 'Generate project documentation'
+  - name: add-tech-doc
+    args: '{file-path} [preset-name]'
+    description: 'Create tech-preset from documentation file'
 
   # Story Creation
   - name: create-next-story
@@ -203,6 +206,7 @@ security:
 
 dependencies:
   tasks:
+    - add-tech-doc.md
     - advanced-elicitation.md
     - analyze-framework.md
     - correct-course.md

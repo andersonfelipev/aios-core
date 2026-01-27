@@ -11,16 +11,21 @@ const inquirer = require('inquirer');
 const path = require('path');
 const fse = require('fs-extra');
 const { buildQuestionSequence } = require('./questions');
-const {
-  showWelcome,
-  showCompletion,
-  showCancellation,
-} = require('./feedback');
+const { showWelcome, showCompletion, showCancellation } = require('./feedback');
 const { generateIDEConfigs, showSuccessSummary } = require('./ide-config-generator');
 const { getIDEConfig } = require('../config/ide-configs');
-const { configureEnvironment } = require('../../packages/installer/src/config/configure-environment');
-const { installDependencies, hasExistingDependencies } = require('../installer/dependency-installer');
-const { installAiosCore, hasPackageJson, createBasicPackageJson } = require('../installer/aios-core-installer');
+const {
+  configureEnvironment,
+} = require('../../packages/installer/src/config/configure-environment');
+const {
+  installDependencies,
+  hasExistingDependencies,
+} = require('../installer/dependency-installer');
+const {
+  installAiosCore,
+  hasPackageJson,
+  createBasicPackageJson,
+} = require('../installer/aios-core-installer');
 const { installProjectMCPs } = require('../../bin/modules/mcp-installer');
 const {
   validateInstallation,
@@ -30,7 +35,7 @@ const {
 const {
   installLLMRouting,
   isLLMRoutingInstalled,
-  getInstallationSummary
+  getInstallationSummary,
 } = require('../../.aios-core/infrastructure/scripts/llm-routing/install-llm-routing');
 
 /**
@@ -40,7 +45,10 @@ const {
  * @returns {string} Workflow file content
  */
 function generateExpansionPackWorkflow(agentName, packName) {
-  const displayName = agentName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const displayName = agentName
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
 
   return `---
 description: Ativa o agente ${displayName} (${packName})
@@ -78,7 +86,7 @@ function setupCancellationHandler() {
 
   // Increase limit to prevent warning during testing
   process.setMaxListeners(15);
-  
+
   const handleSigint = async () => {
     if (cancellationRequested) {
       // Second Ctrl+C - force exit
@@ -87,7 +95,7 @@ function setupCancellationHandler() {
     }
 
     cancellationRequested = true;
-    
+
     console.log('\n');
     const { confirmCancel } = await inquirer.prompt([
       {
@@ -114,9 +122,9 @@ function setupCancellationHandler() {
 
 /**
  * Main wizard execution function
- * 
+ *
  * @returns {Promise<Object>} Wizard answers object
- * 
+ *
  * @example
  * const { runWizard } = require('./src/wizard');
  * const answers = await runWizard();
@@ -144,7 +152,9 @@ async function runWizard() {
     const avgTimePerQuestion = questions.length > 0 ? duration / questions.length : 0;
 
     if (avgTimePerQuestion > 100) {
-      console.warn(`Warning: Average question response time (${avgTimePerQuestion.toFixed(0)}ms) exceeds 100ms target`);
+      console.warn(
+        `Warning: Average question response time (${avgTimePerQuestion.toFixed(0)}ms) exceeds 100ms target`
+      );
     }
 
     // Story 1.4: Install AIOS core framework (agents, tasks, workflows, templates)
@@ -160,16 +170,108 @@ async function runWizard() {
 
       if (aiosCoreResult.success) {
         console.log(`✅ AIOS core installed (${aiosCoreResult.installedFolders.length} folders)`);
-        console.log(`   - Agents: ${aiosCoreResult.installedFolders.includes('agents') ? '✓' : '⨉'}`);
+        console.log(
+          `   - Agents: ${aiosCoreResult.installedFolders.includes('agents') ? '✓' : '⨉'}`
+        );
         console.log(`   - Tasks: ${aiosCoreResult.installedFolders.includes('tasks') ? '✓' : '⨉'}`);
-        console.log(`   - Workflows: ${aiosCoreResult.installedFolders.includes('workflows') ? '✓' : '⨉'}`);
-        console.log(`   - Templates: ${aiosCoreResult.installedFolders.includes('templates') ? '✓' : '⨉'}`);
+        console.log(
+          `   - Workflows: ${aiosCoreResult.installedFolders.includes('workflows') ? '✓' : '⨉'}`
+        );
+        console.log(
+          `   - Templates: ${aiosCoreResult.installedFolders.includes('templates') ? '✓' : '⨉'}`
+        );
       }
       answers.aiosCoreInstalled = true;
       answers.aiosCoreResult = aiosCoreResult;
     } catch (error) {
       console.error('\n⚠️  AIOS core installation failed:', error.message);
       answers.aiosCoreInstalled = false;
+    }
+
+    // Install Tech Preset if selected
+    if (answers.selectedTechPreset && answers.selectedTechPreset !== 'none') {
+      console.log('\n📐 Configuring Tech Preset...');
+
+      try {
+        // Find tech-presets source directory
+        const possiblePresetDirs = [
+          path.join(__dirname, '..', '..', '.aios-core', 'data', 'tech-presets'),
+          path.join(process.cwd(), '.aios-core', 'data', 'tech-presets'),
+        ];
+
+        let sourcePresetDir = null;
+        for (const dir of possiblePresetDirs) {
+          if (fse.existsSync(dir)) {
+            sourcePresetDir = dir;
+            break;
+          }
+        }
+
+        if (sourcePresetDir) {
+          const presetFile = path.join(sourcePresetDir, `${answers.selectedTechPreset}.md`);
+
+          if (fse.existsSync(presetFile)) {
+            // Copy preset to project's .aios-core/data/tech-presets/
+            const targetPresetDir = path.join(process.cwd(), '.aios-core', 'data', 'tech-presets');
+            await fse.ensureDir(targetPresetDir);
+
+            // Copy the selected preset
+            await fse.copy(
+              presetFile,
+              path.join(targetPresetDir, `${answers.selectedTechPreset}.md`)
+            );
+
+            // Copy the template too
+            const templateFile = path.join(sourcePresetDir, '_template.md');
+            if (fse.existsSync(templateFile)) {
+              await fse.copy(templateFile, path.join(targetPresetDir, '_template.md'));
+            }
+
+            // Update technical-preferences.md to mark the selected preset
+            const techPrefsFile = path.join(
+              process.cwd(),
+              '.aios-core',
+              'data',
+              'technical-preferences.md'
+            );
+            const techPrefsSource = path.join(sourcePresetDir, '..', 'technical-preferences.md');
+
+            if (fse.existsSync(techPrefsSource)) {
+              let techPrefsContent = await fse.readFile(techPrefsSource, 'utf8');
+
+              // Add active preset marker
+              const activePresetSection = `\n## Active Preset\n\n**Selected:** \`${answers.selectedTechPreset}\`\n\nThis preset was selected during installation. The @architect and @dev agents will use these patterns by default.\n`;
+
+              // Insert after the first heading
+              techPrefsContent = techPrefsContent.replace(
+                '# User-Defined Preferred Patterns and Preferences',
+                '# User-Defined Preferred Patterns and Preferences' + activePresetSection
+              );
+
+              await fse.writeFile(techPrefsFile, techPrefsContent, 'utf8');
+            }
+
+            console.log(`   ✅ Tech Preset: ${answers.selectedTechPreset}`);
+            console.log(
+              `   📁 Location: .aios-core/data/tech-presets/${answers.selectedTechPreset}.md`
+            );
+            answers.techPresetInstalled = true;
+            answers.techPresetResult = { preset: answers.selectedTechPreset, success: true };
+          } else {
+            console.log(`   ⚠️  Preset file not found: ${answers.selectedTechPreset}`);
+            answers.techPresetInstalled = false;
+          }
+        } else {
+          console.log('   ⚠️  Tech presets directory not found');
+          answers.techPresetInstalled = false;
+        }
+      } catch (error) {
+        console.error(`   ⚠️  Tech Preset error: ${error.message}`);
+        answers.techPresetInstalled = false;
+      }
+    } else {
+      answers.techPresetInstalled = false;
+      answers.techPresetResult = { preset: 'none', success: true };
     }
 
     // Install Expansion Packs if selected
@@ -225,7 +327,9 @@ async function runWizard() {
         };
 
         if (installedPacks.length > 0) {
-          console.log(`\n✅ Expansion Packs installed (${installedPacks.length}/${answers.selectedExpansionPacks.length})`);
+          console.log(
+            `\n✅ Expansion Packs installed (${installedPacks.length}/${answers.selectedExpansionPacks.length})`
+          );
         }
       } else {
         console.log('   ⚠️  Expansion packs source directory not found');
@@ -243,7 +347,7 @@ async function runWizard() {
       } else {
         console.error('\n⚠️  Some IDE configurations could not be created:');
         if (ideConfigResult.errors) {
-          ideConfigResult.errors.forEach(err => {
+          ideConfigResult.errors.forEach((err) => {
             console.error(`  - ${err.ide || 'Unknown'}: ${err.error}`);
           });
         }
@@ -254,17 +358,22 @@ async function runWizard() {
         console.log('\n📦 Installing expansion pack agents to IDEs...');
 
         for (const packName of answers.expansionPacksResult.installed) {
-          const packAgentsDir = path.join(answers.expansionPacksResult.targetDir, packName, 'agents');
+          const packAgentsDir = path.join(
+            answers.expansionPacksResult.targetDir,
+            packName,
+            'agents'
+          );
 
           if (await fse.pathExists(packAgentsDir)) {
-            const agentFiles = (await fse.readdir(packAgentsDir)).filter(f => f.endsWith('.md'));
+            const agentFiles = (await fse.readdir(packAgentsDir)).filter((f) => f.endsWith('.md'));
 
             if (agentFiles.length > 0) {
               for (const ideKey of answers.selectedIDEs) {
                 const ideConfig = getIDEConfig(ideKey);
                 if (!ideConfig || !ideConfig.agentFolder) continue;
 
-                const isAntiGravity = ideConfig.specialConfig && ideConfig.specialConfig.type === 'antigravity';
+                const isAntiGravity =
+                  ideConfig.specialConfig && ideConfig.specialConfig.type === 'antigravity';
 
                 // Determine target folder for this expansion pack
                 let targetFolder;
@@ -272,7 +381,11 @@ async function runWizard() {
                   // AntiGravity: workflows go to .agent/workflows/{packName}/
                   targetFolder = path.join(process.cwd(), ideConfig.agentFolder, packName);
                   // Also need to copy actual agents to .antigravity/agents/{packName}/
-                  const agentsTargetFolder = path.join(process.cwd(), ideConfig.specialConfig.agentsFolder, packName);
+                  const agentsTargetFolder = path.join(
+                    process.cwd(),
+                    ideConfig.specialConfig.agentsFolder,
+                    packName
+                  );
                   await fse.ensureDir(agentsTargetFolder);
 
                   for (const agentFile of agentFiles) {
@@ -282,7 +395,11 @@ async function runWizard() {
                     // Create workflow file
                     const workflowContent = generateExpansionPackWorkflow(agentName, packName);
                     await fse.ensureDir(targetFolder);
-                    await fse.writeFile(path.join(targetFolder, agentFile), workflowContent, 'utf8');
+                    await fse.writeFile(
+                      path.join(targetFolder, agentFile),
+                      workflowContent,
+                      'utf8'
+                    );
 
                     // Copy actual agent
                     await fse.copy(sourcePath, path.join(agentsTargetFolder, agentFile));
@@ -295,12 +412,14 @@ async function runWizard() {
                   for (const agentFile of agentFiles) {
                     await fse.copy(
                       path.join(packAgentsDir, agentFile),
-                      path.join(targetFolder, agentFile),
+                      path.join(targetFolder, agentFile)
                     );
                   }
                 }
               }
-              console.log(`   ✅ ${packName}: ${agentFiles.length} agents installed to ${answers.selectedIDEs.length} IDE(s)`);
+              console.log(
+                `   ✅ ${packName}: ${agentFiles.length} agents installed to ${answers.selectedIDEs.length} IDE(s)`
+              );
             }
           }
         }
@@ -316,7 +435,7 @@ async function runWizard() {
         projectType: answers.projectType || 'greenfield',
         selectedIDEs: answers.selectedIDEs || [],
         mcpServers: answers.mcpServers || [],
-        skipPrompts: false,  // Interactive mode
+        skipPrompts: false, // Interactive mode
       });
 
       if (envResult.envCreated && envResult.coreConfigCreated) {
@@ -332,7 +451,6 @@ async function runWizard() {
       // Store env config result for downstream stories
       answers.envConfigured = true;
       answers.envResult = envResult;
-
     } catch (error) {
       console.error('\n⚠️  Environment configuration failed:');
       console.error(`  ${error.message}`);
@@ -418,7 +536,9 @@ async function runWizard() {
               answers.depsInstalled = true;
               answers.depsResult = retryResult;
             } else {
-              console.log('\n⚠️  Installation still failed. You can run `npm install` manually later.');
+              console.log(
+                '\n⚠️  Installation still failed. You can run `npm install` manually later.'
+              );
               answers.depsInstalled = false;
               answers.depsResult = retryResult;
             }
@@ -453,19 +573,22 @@ async function runWizard() {
         });
 
         if (mcpResult.success) {
-          const successCount = Object.values(mcpResult.installedMCPs).filter(r => r.status === 'success').length;
-          console.log(`\n✅ MCPs installed successfully! (${successCount}/${answers.selectedMCPs.length})`);
+          const successCount = Object.values(mcpResult.installedMCPs).filter(
+            (r) => r.status === 'success'
+          ).length;
+          console.log(
+            `\n✅ MCPs installed successfully! (${successCount}/${answers.selectedMCPs.length})`
+          );
           console.log(`   Configuration: ${mcpResult.configPath}`);
         } else {
           console.error('\n⚠️  Some MCPs failed to install:');
-          mcpResult.errors.forEach(err => console.error(`  - ${err}`));
+          mcpResult.errors.forEach((err) => console.error(`  - ${err}`));
           console.log('\n💡 Check .aios/install-errors.log for details');
         }
 
         // Store MCP result for validation
         answers.mcpsInstalled = mcpResult.success;
         answers.mcpResult = mcpResult;
-
       } catch (error) {
         console.error('\n⚠️  MCP installation error:', error.message);
         answers.mcpsInstalled = false;
@@ -484,7 +607,7 @@ async function runWizard() {
         const llmResult = installLLMRouting({
           projectRoot: process.cwd(),
           onProgress: (msg) => console.log(`   ${msg}`),
-          onError: (msg) => console.error(`   ${msg}`)
+          onError: (msg) => console.error(`   ${msg}`),
         });
 
         if (llmResult.success) {
@@ -496,7 +619,7 @@ async function runWizard() {
           answers.llmRoutingResult = llmResult;
         } else {
           console.error('\n⚠️  LLM Routing installation had errors:');
-          llmResult.errors.forEach(err => console.error(`   - ${err}`));
+          llmResult.errors.forEach((err) => console.error(`   - ${err}`));
           answers.llmRoutingInstalled = false;
           answers.llmRoutingResult = llmResult;
         }
@@ -528,7 +651,7 @@ async function runWizard() {
         },
         (status) => {
           console.log(`  [${status.step}] ${status.message}`);
-        },
+        }
       );
 
       // Display validation report
@@ -552,7 +675,7 @@ async function runWizard() {
     return answers;
   } catch (error) {
     if (error.isTtyError) {
-      console.error('Error: Prompt couldn\'t be rendered in the current environment');
+      console.error("Error: Prompt couldn't be rendered in the current environment");
     } else {
       console.error('Wizard error:', error.message);
     }
@@ -586,4 +709,3 @@ async function runWizard() {
 module.exports = {
   runWizard,
 };
-

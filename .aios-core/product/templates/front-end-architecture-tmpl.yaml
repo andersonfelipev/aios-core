@@ -61,6 +61,24 @@ sections:
         type: table
         columns: [Date, Version, Description, Author]
         instruction: Track document versions and changes
+      - id: tech-preset
+        title: Tech Preset Selection
+        instruction: |
+          AIOS provides pre-defined architecture presets for common technology stacks.
+          Check available presets in: .aios-core/data/tech-presets/
+
+          Available presets for frontend:
+          - **nextjs-react**: Next.js 14+ with React, TypeScript, Tailwind, Zustand, React Query
+            - Includes: 5 Essential Design Patterns, Component Standards, Testing Strategy
+            - Best for: React/Next.js fullstack applications
+
+          If a matching preset exists:
+          1. Load the preset file for detailed patterns and standards
+          2. Use the preset's component standards and project structure
+          3. Follow the preset's testing strategy
+          4. Reference the preset in this document
+
+          Document: "Using [preset-name] preset" or "Custom architecture (no preset)"
 
   - id: frontend-tech-stack
     title: Frontend Tech Stack

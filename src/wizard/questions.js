@@ -1,9 +1,9 @@
 /**
  * Wizard Questions Definitions
- * 
+ *
  * Modular question system for AIOS installation wizard
  * Questions from Stories 1.3-1.6 will be added here
- * 
+ *
  * @module wizard/questions
  */
 
@@ -13,7 +13,7 @@ const { createInquirerValidator, validateProjectType } = require('./validators')
 /**
  * Get project type question (Story 1.3)
  * This is a placeholder - full implementation in Story 1.3
- * 
+ *
  * @returns {Object} Inquirer question object
  */
 function getProjectTypeQuestion() {
@@ -59,27 +59,19 @@ function getPackageManagerQuestion(detectedPM = 'npm') {
     message: colors.primary('Which package manager should be used?'),
     choices: [
       {
-        name: detectedPM === 'npm'
-          ? colors.highlight('npm') + colors.dim(' (detected)')
-          : 'npm',
+        name: detectedPM === 'npm' ? colors.highlight('npm') + colors.dim(' (detected)') : 'npm',
         value: 'npm',
       },
       {
-        name: detectedPM === 'yarn'
-          ? colors.highlight('yarn') + colors.dim(' (detected)')
-          : 'yarn',
+        name: detectedPM === 'yarn' ? colors.highlight('yarn') + colors.dim(' (detected)') : 'yarn',
         value: 'yarn',
       },
       {
-        name: detectedPM === 'pnpm'
-          ? colors.highlight('pnpm') + colors.dim(' (detected)')
-          : 'pnpm',
+        name: detectedPM === 'pnpm' ? colors.highlight('pnpm') + colors.dim(' (detected)') : 'pnpm',
         value: 'pnpm',
       },
       {
-        name: detectedPM === 'bun'
-          ? colors.highlight('bun') + colors.dim(' (detected)')
-          : 'bun',
+        name: detectedPM === 'bun' ? colors.highlight('bun') + colors.dim(' (detected)') : 'bun',
         value: 'bun',
       },
     ],
@@ -100,7 +92,8 @@ function getMCPQuestions() {
       message: colors.primary('Select MCPs to install (project-level):'),
       choices: [
         {
-          name: colors.highlight('Browser (Puppeteer)') + colors.dim(' - Web automation and testing'),
+          name:
+            colors.highlight('Browser (Puppeteer)') + colors.dim(' - Web automation and testing'),
           value: 'browser',
           checked: true,
         },
@@ -166,7 +159,9 @@ function getExpansionPackQuestions() {
       message: colors.primary('Select Expansion Packs to install (optional):'),
       choices: [
         {
-          name: colors.highlight('expansion-creator') + colors.dim(' - Tools to create custom expansion packs'),
+          name:
+            colors.highlight('expansion-creator') +
+            colors.dim(' - Tools to create custom expansion packs'),
           value: 'expansion-creator',
           checked: false,
         },
@@ -180,6 +175,37 @@ function getExpansionPackQuestions() {
         // Allow empty selection (user can skip expansion pack installation)
         return true;
       },
+    },
+  ];
+}
+
+/**
+ * Get Tech Preset selection question
+ *
+ * Tech presets provide pre-configured architecture patterns and standards
+ * for different technology stacks.
+ *
+ * @returns {Object[]} Array of inquirer question objects
+ */
+function getTechPresetQuestion() {
+  return [
+    {
+      type: 'list',
+      name: 'selectedTechPreset',
+      message: colors.primary('Select a Tech Preset for architecture patterns:'),
+      choices: [
+        {
+          name:
+            colors.highlight('nextjs-react') +
+            colors.dim(' - Next.js 14+, React, TypeScript, Tailwind, Zustand'),
+          value: 'nextjs-react',
+        },
+        {
+          name: 'None' + colors.dim(' - Let AIOS decide based on project'),
+          value: 'none',
+        },
+      ],
+      default: 0,
     },
   ];
 }
@@ -206,6 +232,9 @@ function buildQuestionSequence(_context = {}) {
   // Expansion Pack Selection (v2.1)
   questions.push(...getExpansionPackQuestions());
 
+  // Tech Preset Selection
+  questions.push(...getTechPresetQuestion());
+
   // Story 1.7: Package Manager - Auto-detected (no question needed)
   // The wizard will auto-detect and use the appropriate package manager
   // See detectPackageManager() in dependency-installer.js
@@ -223,13 +252,13 @@ function buildQuestionSequence(_context = {}) {
 /**
  * Get question by ID
  * Useful for testing individual questions
- * 
+ *
  * @param {string} questionId - Question identifier
  * @returns {Object|null} Question object or null if not found
  */
 function getQuestionById(questionId) {
   const questionMap = {
-    'projectType': getProjectTypeQuestion(),
+    projectType: getProjectTypeQuestion(),
     // Future questions will be added here
   };
 
@@ -241,9 +270,9 @@ module.exports = {
   getIDEQuestions,
   getMCPQuestions,
   getExpansionPackQuestions,
+  getTechPresetQuestion,
   getEnvironmentQuestions,
   getPackageManagerQuestion,
   buildQuestionSequence,
   getQuestionById,
 };
-
