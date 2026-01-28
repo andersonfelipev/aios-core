@@ -36,10 +36,21 @@ class DevContextLoader {
 
     const startTime = Date.now();
 
-    // Load core config to get devLoadAlwaysFiles list
-    // TD-6: Handle null/undefined coreConfig gracefully
     const coreConfig = await this.loadCoreConfig();
-    const fileList = (coreConfig && coreConfig.devLoadAlwaysFiles) || [];
+
+    // Build file list with tech preset injection
+    let fileList = [];
+
+    // 1. Inject tech preset if configured
+    if (coreConfig?.techPreset?.active && coreConfig?.techPreset?.injectOnDevActivation !== false) {
+      const presetLocation = coreConfig.techPreset.location || '.aios-core/data/tech-presets';
+      const presetPath = `${presetLocation}/${coreConfig.techPreset.active}.md`;
+      fileList.push(presetPath);
+    }
+
+    // 2. Add devLoadAlwaysFiles (optional, may not exist)
+    const devFiles = (coreConfig && coreConfig.devLoadAlwaysFiles) || [];
+    fileList = [...fileList, ...devFiles];
 
     if (fileList.length === 0) {
       return {
@@ -49,7 +60,7 @@ class DevContextLoader {
       };
     }
 
-    // Load files (with cache)
+    // Load files (with cache) - missing files are skipped gracefully
     const files = await this.loadFiles(fileList, { fullLoad, skipCache });
 
     const loadTime = Date.now() - startTime;

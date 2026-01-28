@@ -11,9 +11,9 @@ preset:
   id: nextjs-react
   name: 'Next.js + React Fullstack Preset'
   version: 1.0.0
-  description: 'Arquitetura otimizada para aplicações fullstack com Next.js 14+, React, TypeScript e padrões que maximizam a eficiência do Claude Code'
+  description: 'Arquitetura otimizada para aplicações fullstack com Next.js 16+, React, TypeScript e padrões que maximizam a eficiência do Claude Code'
   technologies:
-    - Next.js 14+ (App Router)
+    - Next.js 16+ (App Router + Proxy)
     - React 18+
     - TypeScript
     - Tailwind CSS
@@ -454,21 +454,21 @@ describe('OrderService', () => {
 
 ## Tech Stack
 
-| Category            | Technology      | Version | Purpose                   |
-| ------------------- | --------------- | ------- | ------------------------- |
-| Framework           | Next.js         | ^14.0.0 | Fullstack React framework |
-| Language            | TypeScript      | ^5.0.0  | Type safety               |
-| Styling             | Tailwind CSS    | ^3.4.0  | Utility-first CSS         |
-| UI Components       | shadcn/ui       | latest  | Accessible components     |
-| State (Global)      | Zustand         | ^4.5.0  | Simple global state       |
-| State (Server)      | React Query     | ^5.0.0  | Server state management   |
-| Forms               | React Hook Form | ^7.50.0 | Form handling             |
-| Validation          | Zod             | ^3.22.0 | Schema validation         |
-| Testing (Unit)      | Vitest          | ^1.2.0  | Fast unit testing         |
-| Testing (Component) | Testing Library | ^14.0.0 | Component testing         |
-| Testing (E2E)       | Playwright      | ^1.41.0 | E2E testing               |
-| API Mocking         | MSW             | ^2.1.0  | Mock Service Worker       |
-| Database            | Prisma          | ^5.9.0  | Type-safe ORM             |
+| Category            | Technology      | Version | Purpose                                 |
+| ------------------- | --------------- | ------- | --------------------------------------- |
+| Framework           | Next.js         | ^16.0.0 | Fullstack React framework (Proxy-based) |
+| Language            | TypeScript      | ^5.0.0  | Type safety                             |
+| Styling             | Tailwind CSS    | ^3.4.0  | Utility-first CSS                       |
+| UI Components       | shadcn/ui       | latest  | Accessible components                   |
+| State (Global)      | Zustand         | ^4.5.0  | Simple global state                     |
+| State (Server)      | React Query     | ^5.0.0  | Server state management                 |
+| Forms               | React Hook Form | ^7.50.0 | Form handling                           |
+| Validation          | Zod             | ^3.22.0 | Schema validation                       |
+| Testing (Unit)      | Vitest          | ^1.2.0  | Fast unit testing                       |
+| Testing (Component) | Testing Library | ^14.0.0 | Component testing                       |
+| Testing (E2E)       | Playwright      | ^1.41.0 | E2E testing                             |
+| API Mocking         | MSW             | ^2.1.0  | Mock Service Worker                     |
+| Database            | Prisma          | ^5.9.0  | Type-safe ORM                           |
 
 ### Required Dependencies
 
@@ -509,6 +509,70 @@ npm install -D prisma @types/node @types/react
 3. **Types First:** Always define schemas/types BEFORE implementation
 4. **Error Handling:** All async operations must have explicit error handling
 5. **No `any` Types:** Use `unknown` if type is truly unknown, then narrow
+
+### Next.js 16+ Proxy (substitui Middleware)
+
+> **IMPORTANTE:** Next.js 16 substituiu o Middleware pelo sistema de Proxy. NÃO use `middleware.ts`.
+
+**Antes (Next.js 14 - DEPRECADO):**
+
+```typescript
+// middleware.ts - NÃO USE MAIS
+export function middleware(request: NextRequest) {
+  // auth checks, redirects, etc.
+}
+```
+
+**Agora (Next.js 16+ - USE PROXY):**
+
+```typescript
+// next.config.ts
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://api.example.com/:path*',
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: '/old-route',
+        destination: '/new-route',
+        permanent: true,
+      },
+    ];
+  },
+};
+
+export default nextConfig;
+```
+
+**Para autenticação, use Server Components ou Route Handlers:**
+
+```typescript
+// app/dashboard/page.tsx
+import { auth } from '@/features/auth'
+import { redirect } from 'next/navigation'
+
+export default async function DashboardPage() {
+  const session = await auth()
+  if (!session) redirect('/login')
+
+  return <Dashboard user={session.user} />
+}
+```
+
+**Vantagens do Proxy sobre Middleware:**
+
+- Executa no servidor Node.js (não em Edge Runtime limitado)
+- Acesso completo a banco de dados e serviços
+- Melhor performance e caching
+- Configuração centralizada em `next.config.ts`
 
 ### TypeScript Config
 
@@ -857,9 +921,10 @@ When integrating with existing feature:
 
 ## Changelog
 
-| Date       | Version | Changes                                       |
-| ---------- | ------- | --------------------------------------------- |
-| 2025-01-27 | 1.0.0   | Initial version based on DEVELOPMENT_GUIDE.md |
+| Date       | Version | Changes                                              |
+| ---------- | ------- | ---------------------------------------------------- |
+| 2026-01-28 | 1.1.0   | Update to Next.js 16+, replace Middleware with Proxy |
+| 2025-01-27 | 1.0.0   | Initial version based on DEVELOPMENT_GUIDE.md        |
 
 ---
 

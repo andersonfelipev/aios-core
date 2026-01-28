@@ -36,6 +36,18 @@ Each preset includes:
 - **Testing Strategy:** What to test, coverage goals
 - **File Templates:** Ready-to-use code templates
 
+## Active Preset
+
+> **Current:** `nextjs-react` (Next.js 16+, React, TypeScript, Tailwind, Zustand)
+
+The active preset is automatically loaded when @dev is activated. To change:
+
+```yaml
+# .aios-core/core-config.yaml
+techPreset:
+  active: nextjs-react # Change to another preset name
+```
+
 ---
 
 ## User Preferences
