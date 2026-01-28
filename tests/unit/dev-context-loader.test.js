@@ -87,7 +87,7 @@ describe('DevContextLoader', () => {
         expect(result.files).toBeTruthy();
 
         // Check each file has summary structure
-        result.files.forEach(file => {
+        result.files.forEach((file) => {
           if (file.summary) {
             expect(file.summary).toContain('## Key Sections:');
             expect(file.summary).toContain('## Preview (first 100 lines):');
@@ -109,11 +109,14 @@ describe('DevContextLoader', () => {
       }
 
       // Only count successfully loaded files (exclude files with errors)
-      const successfulSummaryFiles = summaryResult.files.filter(f => !f.error);
-      const successfulFullFiles = fullResult.files.filter(f => !f.error);
+      const successfulSummaryFiles = summaryResult.files.filter((f) => !f.error);
+      const successfulFullFiles = fullResult.files.filter((f) => !f.error);
 
       // Calculate total lines only from successfully loaded files
-      const summaryLines = successfulSummaryFiles.reduce((sum, f) => sum + (f.summaryLines || 0), 0);
+      const summaryLines = successfulSummaryFiles.reduce(
+        (sum, f) => sum + (f.summaryLines || 0),
+        0
+      );
       const fullLines = successfulFullFiles.reduce((sum, f) => sum + (f.linesCount || 0), 0);
 
       // Only test reduction if we have data to compare
@@ -136,7 +139,7 @@ describe('DevContextLoader', () => {
       if (result.status === 'loaded') {
         expect(result.loadStrategy).toBe('full');
 
-        result.files.forEach(file => {
+        result.files.forEach((file) => {
           if (file.content) {
             expect(file.content).toBeTruthy();
             expect(file.linesCount).toBeGreaterThan(0);
@@ -155,7 +158,8 @@ describe('DevContextLoader', () => {
 
       if (result.status === 'loaded') {
         // Check cache directory exists
-        const cacheExists = await fs.access(testCacheDir)
+        const cacheExists = await fs
+          .access(testCacheDir)
           .then(() => true)
           .catch(() => false);
 
@@ -166,7 +170,7 @@ describe('DevContextLoader', () => {
     test('respects cache TTL (1 hour)', async () => {
       // This test would require mocking time or waiting 1 hour
       // For now, we'll test the cache key generation
-      const cacheKey = loader.getCacheKey('docs/framework/coding-standards.md', false);
+      const cacheKey = loader.getCacheKey('docs/en/framework/coding-standards.md', false);
 
       expect(cacheKey).toMatch(/^devcontext_/);
       expect(cacheKey).toContain('_summary');
@@ -181,7 +185,7 @@ describe('DevContextLoader', () => {
 
       // Verify cache is empty
       const files = await fs.readdir(testCacheDir).catch(() => []);
-      const devContextFiles = files.filter(f => f.startsWith('devcontext_'));
+      const devContextFiles = files.filter((f) => f.startsWith('devcontext_'));
 
       expect(devContextFiles.length).toBe(0);
     });
@@ -196,7 +200,7 @@ describe('DevContextLoader', () => {
 
       if (result.status === 'loaded') {
         // Check if any files have errors
-        const filesWithErrors = result.files.filter(f => f.error);
+        const filesWithErrors = result.files.filter((f) => f.error);
 
         // Should still return results for files that loaded successfully
         expect(result.files.length).toBeGreaterThan(0);
@@ -264,7 +268,7 @@ describe('DevContextLoader', () => {
     });
 
     test('normalizes file paths in cache keys', () => {
-      const key = loader.getCacheKey('docs/framework/coding-standards.md', false);
+      const key = loader.getCacheKey('docs/en/framework/coding-standards.md', false);
 
       // Should not contain special characters
       expect(key).not.toMatch(/[/\\.]/);

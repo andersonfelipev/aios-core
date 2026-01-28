@@ -312,18 +312,16 @@ class SquadValidator {
         const manifest = yaml.load(content);
 
         if (manifest && manifest.components) {
-          await this._validateReferencedFiles(
-            squadPath,
-            manifest.components,
-            result,
-          );
+          await this._validateReferencedFiles(squadPath, manifest.components, result);
         }
       } catch {
         // Already handled in manifest validation
       }
     }
 
-    this._log(`Structure validation: ${result.errors.length} errors, ${result.warnings.length} warnings`);
+    this._log(
+      `Structure validation: ${result.errors.length} errors, ${result.warnings.length} warnings`
+    );
     return result;
   }
 
@@ -431,7 +429,7 @@ class SquadValidator {
       const resolvedPath = await this._resolveConfigPath(squadPath, configPath);
       if (!resolvedPath) {
         // Check if this is a project-level reference that doesn't exist
-        if (configPath.includes('..') || configPath.includes('docs/framework')) {
+        if (configPath.includes('..') || configPath.includes('docs/en/framework')) {
           result.warnings.push({
             code: ValidationErrorCodes.FILE_NOT_FOUND,
             message: `Config reference not found: ${configPath}`,
@@ -449,7 +447,9 @@ class SquadValidator {
       }
     }
 
-    this._log(`Config validation: ${result.errors.length} errors, ${result.warnings.length} warnings`);
+    this._log(
+      `Config validation: ${result.errors.length} errors, ${result.warnings.length} warnings`
+    );
     return result;
   }
 
@@ -501,8 +501,7 @@ class SquadValidator {
             code: ValidationErrorCodes.AGENT_INVALID_FORMAT,
             file: agentFile,
             message: 'Agent file may not follow AIOS agent definition format',
-            suggestion:
-              'Use agent: YAML frontmatter or markdown heading structure',
+            suggestion: 'Use agent: YAML frontmatter or markdown heading structure',
           });
         }
 
@@ -626,7 +625,7 @@ class SquadValidator {
     if (!configPath) return null;
 
     // Resolve path relative to squad directory
-    // path.resolve handles both local paths (config/file.md) and relative paths (../../docs/framework/...)
+    // path.resolve handles both local paths (config/file.md) and relative paths (../../docs/en/framework/...)
     // Simplified from redundant path.resolve + path.join (CodeRabbit nitpick)
     const resolvedPath = path.resolve(squadPath, configPath);
     if (await this._pathExists(resolvedPath)) {
@@ -659,10 +658,7 @@ class SquadValidator {
         // Create patterns that handle Portuguese accents
         const patterns = [
           new RegExp(`^[#*-]*\\s*${field}\\s*:`, 'im'),
-          new RegExp(
-            `^[#*-]*\\s*${field.replace(/a/g, '[aá]').replace(/i/g, '[ií]')}\\s*:`,
-            'im',
-          ),
+          new RegExp(`^[#*-]*\\s*${field.replace(/a/g, '[aá]').replace(/i/g, '[ií]')}\\s*:`, 'im'),
           // Also check for markdown headers with the field
           new RegExp(`^#+\\s*${field}`, 'im'),
         ];
@@ -745,8 +741,7 @@ class SquadValidator {
    */
   _getSchemaSuggestion(error) {
     const suggestions = {
-      'must match pattern':
-        'Use correct format (kebab-case for names, semver for versions)',
+      'must match pattern': 'Use correct format (kebab-case for names, semver for versions)',
       'must be string': 'Wrap value in quotes',
       'must be array': 'Use YAML array syntax: [item1, item2] or - item',
       'must have required property': 'Add the missing required property',

@@ -35,13 +35,21 @@ architecture:
 
 customTechnicalDocuments: null
 
+# ============================================
+# SECTION 2.5: Tech Preset Configuration
+# ============================================
+techPreset:
+  active: nextjs-react
+  location: .aios-core/data/tech-presets
+  injectOnDevActivation: true
+
 # Official framework documentation location (Story 6.11)
-# Prefer docs/framework/ for portable framework standards
+# Prefer docs/en/framework/ for portable framework standards (i18n structure)
 # docs/architecture/ contains project-specific analysis and decisions
 devLoadAlwaysFiles:
-  - docs/framework/coding-standards.md
-  - docs/framework/tech-stack.md
-  - docs/framework/source-tree.md
+  - docs/en/framework/coding-standards.md
+  - docs/en/framework/tech-stack.md
+  - docs/en/framework/source-tree.md
 
 # Fallback patterns for backward compatibility and alternative naming
 # These will be tried if the primary files above are not found

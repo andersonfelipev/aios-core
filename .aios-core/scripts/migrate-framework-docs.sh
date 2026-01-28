@@ -27,7 +27,7 @@ NC='\033[0m' # No Color
 # Default values
 DRY_RUN=false
 TARGET_REPO="../aios-core"
-SOURCE_DOCS="docs/framework"
+SOURCE_DOCS="docs/en/framework"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do

@@ -155,7 +155,7 @@ describe('SquadGenerator Integration Tests', () => {
         name: 'extend-config-test',
         configMode: 'extend',
         // Use tempDir as projectRoot to ensure local config files are created
-        // (prevents detection of aios-core's docs/framework/ configs)
+        // (prevents detection of aios-core's docs/en/framework/ configs)
         projectRoot: tempDir,
       });
 
@@ -165,7 +165,7 @@ describe('SquadGenerator Integration Tests', () => {
       // Config files should exist (created locally since no project configs in tempDir)
       const codingStandards = await fs.readFile(
         path.join(result.path, 'config', 'coding-standards.md'),
-        'utf-8',
+        'utf-8'
       );
       expect(codingStandards).toContain('extends');
     });

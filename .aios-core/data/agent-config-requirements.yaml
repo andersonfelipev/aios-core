@@ -38,13 +38,13 @@ agents:
       - devStoryLocation
       - dataLocation
     files_loaded:
-      - path: docs/framework/coding-standards.md
+      - path: docs/en/framework/coding-standards.md
         lazy: false
         size: 25KB
-      - path: docs/framework/tech-stack.md
+      - path: docs/en/framework/tech-stack.md
         lazy: false
         size: 30KB
-      - path: docs/framework/source-tree.md
+      - path: docs/en/framework/source-tree.md
         lazy: false
         size: 20KB
       - path: .aios-core/data/technical-preferences.md
@@ -275,19 +275,19 @@ lazy_loading_strategy:
         - db-sage
       cache_priority: high
 
-    - path: docs/framework/coding-standards.md
+    - path: docs/en/framework/coding-standards.md
       size: 25KB
       used_by:
         - dev
       cache_priority: high
 
-    - path: docs/framework/tech-stack.md
+    - path: docs/en/framework/tech-stack.md
       size: 30KB
       used_by:
         - dev
       cache_priority: high
 
-    - path: docs/framework/source-tree.md
+    - path: docs/en/framework/source-tree.md
       size: 20KB
       used_by:
         - dev
@@ -337,9 +337,9 @@ cache_strategy:
 
   high_priority_files:
     - .aios-core/data/technical-preferences.md
-    - docs/framework/coding-standards.md
-    - docs/framework/tech-stack.md
-    - docs/framework/source-tree.md
+    - docs/en/framework/coding-standards.md
+    - docs/en/framework/tech-stack.md
+    - docs/en/framework/source-tree.md
 
   cache_invalidation_triggers:
     - file_modification
@@ -354,7 +354,7 @@ cache_strategy:
 
 migration_notes:
   framework_docs:
-    current_location: docs/framework/
+    current_location: docs/en/framework/
     future_location: aios-core/docs/framework/  # In REPO 1
     migration_phase: Q2 2026
 

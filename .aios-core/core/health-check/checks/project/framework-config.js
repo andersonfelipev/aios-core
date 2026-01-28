@@ -26,7 +26,7 @@ const REQUIRED_CONFIGS = [
 const RECOMMENDED_CONFIGS = [
   { path: '.aios', type: 'directory', description: 'AIOS local configuration' },
   { path: '.claude/CLAUDE.md', type: 'file', description: 'Project instructions' },
-  { path: 'docs/framework', type: 'directory', description: 'Framework documentation' },
+  { path: 'docs/en/framework', type: 'directory', description: 'Framework documentation' },
 ];
 
 /**

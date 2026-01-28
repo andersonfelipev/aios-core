@@ -55,7 +55,7 @@ function generateCoreConfig(options = {}) {
     mcp: {
       enabled: mcpServers.length > 0,
       configLocation: '.claude/mcp.json',
-      servers: mcpServers.map(server => server.name || server.id),
+      servers: mcpServers.map((server) => server.name || server.id),
     },
 
     // QA Configuration
@@ -83,9 +83,9 @@ function generateCoreConfig(options = {}) {
     // Development Configuration
     customTechnicalDocuments: null,
     devLoadAlwaysFiles: [
-      'docs/framework/coding-standards.md',
-      'docs/framework/tech-stack.md',
-      'docs/framework/source-tree.md',
+      'docs/en/framework/coding-standards.md',
+      'docs/en/framework/tech-stack.md',
+      'docs/en/framework/source-tree.md',
     ],
     devLoadAlwaysFilesFallback: [
       'docs/architecture/padroes-de-codigo.md',
@@ -99,17 +99,13 @@ function generateCoreConfig(options = {}) {
     slashPrefix: 'AIOS',
 
     // Framework Documentation Paths
-    frameworkDocsLocation: 'docs/framework',
+    frameworkDocsLocation: 'docs/en/framework',
     projectDocsLocation: 'docs/architecture/project-decisions',
 
     // Lazy Loading Configuration
     lazyLoading: {
       enabled: true,
-      heavySections: [
-        'pvMindContext',
-        'expansionPacks',
-        'registry',
-      ],
+      heavySections: ['pvMindContext', 'expansionPacks', 'registry'],
     },
 
     // Git Configuration

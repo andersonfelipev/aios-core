@@ -61,7 +61,7 @@ docs/ @SynkraAI
 docs/architecture/ @SynkraAI
 
 # Framework standards
-docs/framework/ @SynkraAI
+docs/en/framework/ @SynkraAI
 
 # User guides
 docs/guides/ @SynkraAI

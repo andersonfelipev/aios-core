@@ -164,7 +164,7 @@ describe('SquadGenerator', () => {
       const error = new SquadGeneratorError(
         GeneratorErrorCodes.INVALID_NAME,
         'Test message',
-        'Test suggestion',
+        'Test suggestion'
       );
 
       expect(error.name).toBe('SquadGeneratorError');
@@ -256,18 +256,16 @@ describe('SquadGenerator', () => {
 
       // Try to create again
       await expect(generator.generate({ name: 'existing-squad' })).rejects.toThrow(
-        SquadGeneratorError,
+        SquadGeneratorError
       );
     });
 
     it('should fail with invalid squad name', async () => {
       await expect(generator.generate({ name: 'InvalidName' })).rejects.toThrow(
-        SquadGeneratorError,
+        SquadGeneratorError
       );
 
-      await expect(generator.generate({ name: '123-squad' })).rejects.toThrow(
-        SquadGeneratorError,
-      );
+      await expect(generator.generate({ name: '123-squad' })).rejects.toThrow(SquadGeneratorError);
     });
 
     it('should fail without squad name', async () => {
@@ -279,7 +277,7 @@ describe('SquadGenerator', () => {
         generator.generate({
           name: 'template-test',
           template: 'invalid-template',
-        }),
+        })
       ).rejects.toThrow(SquadGeneratorError);
     });
 
@@ -288,7 +286,7 @@ describe('SquadGenerator', () => {
         generator.generate({
           name: 'config-test',
           configMode: 'invalid-mode',
-        }),
+        })
       ).rejects.toThrow(SquadGeneratorError);
     });
 
@@ -397,7 +395,7 @@ describe('SquadGenerator', () => {
 
   describe('generate() config inheritance', () => {
     it('should set extends mode correctly', async () => {
-      // Pass projectRoot: tempDir to prevent detecting real project's docs/framework/
+      // Pass projectRoot: tempDir to prevent detecting real project's docs/en/framework/
       const result = await generator.generate({
         name: 'extend-test',
         configMode: 'extend',
@@ -409,7 +407,7 @@ describe('SquadGenerator', () => {
 
       const codingStandards = await fs.readFile(
         path.join(result.path, 'config', 'coding-standards.md'),
-        'utf-8',
+        'utf-8'
       );
       expect(codingStandards).toContain('extends');
     });
@@ -541,15 +539,15 @@ describe('SquadGenerator', () => {
       });
     });
 
-    it('should return null when docs/framework/ does not exist', async () => {
+    it('should return null when docs/en/framework/ does not exist', async () => {
       const squadPath = path.join(projectDir, 'squads', 'test-squad');
       const result = await generator.detectProjectConfigs(projectDir, squadPath);
       expect(result).toBeNull();
     });
 
-    it('should detect project configs when docs/framework/ exists', async () => {
-      // Create docs/framework/ with config files
-      const frameworkDir = path.join(projectDir, 'docs', 'framework');
+    it('should detect project configs when docs/en/framework/ exists', async () => {
+      // Create docs/en/framework/ with config files
+      const frameworkDir = path.join(projectDir, 'docs', 'en', 'framework');
       await fs.mkdir(frameworkDir, { recursive: true });
       await fs.writeFile(path.join(frameworkDir, 'CODING-STANDARDS.md'), '# Standards');
       await fs.writeFile(path.join(frameworkDir, 'TECH-STACK.md'), '# Tech');
@@ -559,14 +557,14 @@ describe('SquadGenerator', () => {
       const result = await generator.detectProjectConfigs(projectDir, squadPath);
 
       expect(result).not.toBeNull();
-      expect(result['coding-standards']).toContain('docs/framework/CODING-STANDARDS.md');
-      expect(result['tech-stack']).toContain('docs/framework/TECH-STACK.md');
-      expect(result['source-tree']).toContain('docs/framework/SOURCE-TREE.md');
+      expect(result['coding-standards']).toContain('docs/en/framework/CODING-STANDARDS.md');
+      expect(result['tech-stack']).toContain('docs/en/framework/TECH-STACK.md');
+      expect(result['source-tree']).toContain('docs/en/framework/SOURCE-TREE.md');
     });
 
     it('should detect case-insensitive config files', async () => {
-      // Create docs/framework/ with lowercase files
-      const frameworkDir = path.join(projectDir, 'docs', 'framework');
+      // Create docs/en/framework/ with lowercase files
+      const frameworkDir = path.join(projectDir, 'docs', 'en', 'framework');
       await fs.mkdir(frameworkDir, { recursive: true });
       await fs.writeFile(path.join(frameworkDir, 'coding-standards.md'), '# Standards');
 
@@ -580,9 +578,9 @@ describe('SquadGenerator', () => {
       expect(result['coding-standards'].toLowerCase()).toContain('coding-standards.md');
     });
 
-    it('should return null when docs/framework/ has no matching files', async () => {
-      // Create empty docs/framework/
-      const frameworkDir = path.join(projectDir, 'docs', 'framework');
+    it('should return null when docs/en/framework/ has no matching files', async () => {
+      // Create empty docs/en/framework/
+      const frameworkDir = path.join(projectDir, 'docs', 'en', 'framework');
       await fs.mkdir(frameworkDir, { recursive: true });
       await fs.writeFile(path.join(frameworkDir, 'other-file.md'), '# Other');
 
@@ -607,8 +605,8 @@ describe('SquadGenerator', () => {
     });
 
     it('should reference project configs when configMode is extend and project configs exist', async () => {
-      // Create docs/framework/ with config files
-      const frameworkDir = path.join(projectDir, 'docs', 'framework');
+      // Create docs/en/framework/ with config files
+      const frameworkDir = path.join(projectDir, 'docs', 'en', 'framework');
       await fs.mkdir(frameworkDir, { recursive: true });
       await fs.writeFile(path.join(frameworkDir, 'CODING-STANDARDS.md'), '# Standards');
       await fs.writeFile(path.join(frameworkDir, 'TECH-STACK.md'), '# Tech');
@@ -622,9 +620,9 @@ describe('SquadGenerator', () => {
 
       // Read squad.yaml and check it references project configs
       const squadYaml = await fs.readFile(path.join(result.path, 'squad.yaml'), 'utf-8');
-      expect(squadYaml).toContain('docs/framework/CODING-STANDARDS.md');
-      expect(squadYaml).toContain('docs/framework/TECH-STACK.md');
-      expect(squadYaml).toContain('docs/framework/SOURCE-TREE.md');
+      expect(squadYaml).toContain('docs/en/framework/CODING-STANDARDS.md');
+      expect(squadYaml).toContain('docs/en/framework/TECH-STACK.md');
+      expect(squadYaml).toContain('docs/en/framework/SOURCE-TREE.md');
 
       // Check that local config files were NOT created
       const configDir = path.join(result.path, 'config');
@@ -639,7 +637,7 @@ describe('SquadGenerator', () => {
       const result = await generator.generate({
         name: 'fallback-squad',
         configMode: 'extend',
-        projectRoot: projectDir, // No docs/framework/ exists
+        projectRoot: projectDir, // No docs/en/framework/ exists
       });
 
       // Read squad.yaml and check it uses local config paths
@@ -657,8 +655,8 @@ describe('SquadGenerator', () => {
     });
 
     it('should always create local configs when configMode is override', async () => {
-      // Create docs/framework/ with config files
-      const frameworkDir = path.join(projectDir, 'docs', 'framework');
+      // Create docs/en/framework/ with config files
+      const frameworkDir = path.join(projectDir, 'docs', 'en', 'framework');
       await fs.mkdir(frameworkDir, { recursive: true });
       await fs.writeFile(path.join(frameworkDir, 'CODING-STANDARDS.md'), '# Standards');
       await fs.writeFile(path.join(frameworkDir, 'TECH-STACK.md'), '# Tech');
