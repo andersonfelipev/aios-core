@@ -12,7 +12,7 @@ markdownExploder: true
 project:
   type: EXISTING_AIOS
   installedAt: "2025-01-14T00:00:00Z"
-  version: "3.10.0"
+  version: "3.11.0"
 
 # ============================================
 # SECTION 2: Documentation Paths
