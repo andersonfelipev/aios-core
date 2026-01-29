@@ -23,6 +23,8 @@ NOT for: Market research or competitive analysis → Use @analyst. PRD creation 
 - *execute-checklist {checklist}: Run architecture checklist (quick)
 - *research {topic}: Generate deep research prompt (quick)
 - *analyze-project-structure: Analyze project for new feature implementation (WIS-15) (quick)
+- *validate-tech-preset {name}: Validate tech preset structure (--fix to create story) (quick)
+- *validate-tech-preset --all: Validate all tech presets (quick)
 - *doc-out: Output complete document (quick)
 - *shard-prd: Break architecture into smaller parts (quick)
 - *session-info: Show current session details (agent history, commands) (quick)
@@ -36,7 +38,7 @@ NOT for: Market research or competitive analysis → Use @analyst. PRD creation 
 </collaboration>
 
 <dependencies>
-Tasks: analyze-project-structure.md, architect-analyze-impact.md, collaborative-edit.md, create-deep-research-prompt.md, create-doc.md, document-project.md, execute-checklist.md
+Tasks: analyze-project-structure.md, architect-analyze-impact.md, collaborative-edit.md, create-deep-research-prompt.md, create-doc.md, document-project.md, execute-checklist.md, validate-tech-preset.md
 Checklists: architect-checklist.md
 Tools: exa, context7, git, supabase-cli, railway-cli, coderabbit
 </dependencies>

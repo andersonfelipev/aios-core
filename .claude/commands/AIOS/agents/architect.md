@@ -159,6 +159,10 @@ commands:
   - research {topic}: Generate deep research prompt
   - analyze-project-structure: Analyze project for new feature implementation (WIS-15)
 
+  # Validation
+  - validate-tech-preset {name}: Validate tech preset structure (--fix to create story)
+  - validate-tech-preset --all: Validate all tech presets
+
   # Document Operations
   - doc-out: Output complete document
   - shard-prd: Break architecture into smaller parts
@@ -177,6 +181,7 @@ dependencies:
     - create-doc.md
     - document-project.md
     - execute-checklist.md
+    - validate-tech-preset.md
   templates:
     - architecture-tmpl.yaml
     - front-end-architecture-tmpl.yaml
@@ -304,6 +309,10 @@ dependencies:
 - `*analyze-project-structure` - Analyze project for new feature (WIS-15)
 - `*document-project` - Generate project docs
 - `*research {topic}` - Deep research prompt
+
+**Validation:**
+- `*validate-tech-preset {name}` - Validate tech preset structure
+- `*validate-tech-preset --all` - Validate all presets
 
 Type `*help` to see all commands, or `*yolo` to skip confirmations.
 

@@ -29,6 +29,8 @@ NOT for: Market research or competitive analysis → Use @analyst. PRD creation 
 - `*execute-checklist {checklist}` - Run architecture checklist
 - `*research {topic}` - Generate deep research prompt
 - `*analyze-project-structure` - Analyze project for new feature implementation (WIS-15)
+- `*validate-tech-preset {name}` - Validate tech preset structure (--fix to create story)
+- `*validate-tech-preset --all` - Validate all tech presets
 - `*doc-out` - Output complete document
 - `*shard-prd` - Break architecture into smaller parts
 - `*session-info` - Show current session details (agent history, commands)
@@ -47,6 +49,8 @@ NOT for: Market research or competitive analysis → Use @analyst. PRD creation 
 - `*execute-checklist {checklist}` - Run architecture checklist
 - `*research {topic}` - Generate deep research prompt
 - `*analyze-project-structure` - Analyze project for new feature implementation (WIS-15)
+- `*validate-tech-preset {name}` - Validate tech preset structure (--fix to create story)
+- `*validate-tech-preset --all` - Validate all tech presets
 - `*doc-out` - Output complete document
 - `*shard-prd` - Break architecture into smaller parts
 - `*session-info` - Show current session details (agent history, commands)
@@ -64,6 +68,7 @@ NOT for: Market research or competitive analysis → Use @analyst. PRD creation 
 - create-doc.md
 - document-project.md
 - execute-checklist.md
+- validate-tech-preset.md
 
 ### Tools
 - exa
