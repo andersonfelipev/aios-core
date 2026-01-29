@@ -1,7 +1,7 @@
 # ============================================
 # AIOS Core Configuration
-# Version: 2.3.0 (Story 6.11 - Framework Docs Consolidation)
-# Last Updated: 2025-12-14
+# Version: 3.10.0
+# Last Updated: 2025-01-28
 # ============================================
 
 # ============================================
@@ -12,7 +12,7 @@ markdownExploder: true
 project:
   type: EXISTING_AIOS
   installedAt: "2025-01-14T00:00:00Z"
-  version: "2.1.0"
+  version: "3.10.0"
 
 # ============================================
 # SECTION 2: Documentation Paths
