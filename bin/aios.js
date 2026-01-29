@@ -145,25 +145,25 @@ function copyDirSync(src, dest, options = {}) {
   return changes;
 }
 
-// Helper: Detect git remote repository
-function detectGitRepo() {
+// Helper: Detect AIOS source repository from package.json
+function detectAiosRepo() {
   try {
-    const remoteUrl = execSync('git remote get-url origin', {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }).trim();
+    // Use repository.url from aios-core's own package.json
+    const repoUrl = packageJson.repository?.url || '';
 
     // Parse GitHub URL formats:
     // https://github.com/user/repo.git
+    // git+https://github.com/user/repo.git
     // git@github.com:user/repo.git
-    const match = remoteUrl.match(/github\.com[/:]([\w-]+)\/([\w-]+?)(\.git)?$/);
+    const match = repoUrl.match(/github\.com[/:]([\w-]+)\/([\w-]+?)(\.git)?$/);
     if (match) {
       return `${match[1]}/${match[2]}`;
     }
 
-    return null;
+    // Fallback to default
+    return 'SynkraAI/aios-core';
   } catch {
-    return null;
+    return 'SynkraAI/aios-core';
   }
 }
 
@@ -181,8 +181,8 @@ async function runUpdate() {
     process.exit(1);
   }
 
-  // Determine repository
-  const repo = flags.repo || detectGitRepo();
+  // Determine repository (from aios-core's package.json, not the current project)
+  const repo = flags.repo || detectAiosRepo();
   if (!repo) {
     console.error('❌ Could not detect repository');
     console.log('\nSpecify repository with --repo flag:');
