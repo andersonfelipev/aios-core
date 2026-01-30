@@ -6,11 +6,11 @@
 
 ## 🌐 Select Language / Selecione o Idioma / Seleccione el Idioma
 
-| Language | Status | Link |
-|----------|--------|------|
-| **English** | ✅ Complete | [📖 English Documentation](./en/getting-started.md) |
+| Language               | Status      | Link                                                       |
+| ---------------------- | ----------- | ---------------------------------------------------------- |
+| **English**            | ✅ Complete | [📖 English Documentation](./en/getting-started.md)        |
 | **Português (Brasil)** | ✅ Complete | [📖 Documentação em Português](./pt-BR/getting-started.md) |
-| **Español** | ✅ Complete | [📖 Documentación en Español](./es/getting-started.md) |
+| **Español**            | ✅ Complete | [📖 Documentación en Español](./es/getting-started.md)     |
 
 ---
 
@@ -81,6 +81,7 @@ We follow the [Kubernetes localization standards](https://kubernetes.io/docs/con
 1. Each language has its own directory (`en/`, `pt-BR/`, `es/`)
 2. File structure mirrors the English version
 3. Add translation header to each file:
+
    ```markdown
    <!--
      Translation: PT-BR | ES
@@ -91,14 +92,14 @@ We follow the [Kubernetes localization standards](https://kubernetes.io/docs/con
 
 ### Translation Status / Status da Tradução / Estado de la Traducción
 
-| Section | EN | PT-BR | ES |
-|---------|-----|-------|-----|
-| Getting Started | ✅ | ✅ | ✅ |
-| Guides | ✅ | ✅ | ✅ |
-| Installation | ✅ | ✅ | ✅ |
-| Architecture | ✅ | ✅ | ✅ |
-| Framework | ✅ | ✅ | ✅ |
-| Platforms | ✅ | ✅ | ✅ |
+| Section         | EN  | PT-BR | ES  |
+| --------------- | --- | ----- | --- |
+| Getting Started | ✅  | ✅    | ✅  |
+| Guides          | ✅  | ✅    | ✅  |
+| Installation    | ✅  | ✅    | ✅  |
+| Architecture    | ✅  | ✅    | ✅  |
+| Framework       | ✅  | ✅    | ✅  |
+| Platforms       | ✅  | ✅    | ✅  |
 
 ---
 
@@ -108,4 +109,4 @@ This documentation is part of Synkra AIOS, licensed under [MIT License](../LICEN
 
 ---
 
-*Synkra AIOS - Orchestrating AI for Better Software Development*
+_Synkra AIOS - Orchestrating AI for Better Software Development_
