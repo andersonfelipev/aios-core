@@ -14,7 +14,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
-const { hashFile, hashString } = require('../src/installer/file-hasher');
+const { hashFile, hashString } = require('../packages/installer/src/installer/file-hasher');
 
 // Import FOLDERS_TO_COPY from installer (same source of truth)
 const FOLDERS_TO_COPY = [
@@ -23,6 +23,9 @@ const FOLDERS_TO_COPY = [
   'development',
   'product',
   'infrastructure',
+  // v2.1 New Modules (Story 6.19 - added missing folders)
+  'workflow-intelligence',
+  'monitor',
   // v2.0 Legacy Flat Structure (backwards compatibility)
   'agents',
   'agent-teams',
@@ -141,6 +144,15 @@ function getFileType(relativePath) {
   }
   if (normalized.includes('/development/') || normalized.startsWith('development/')) {
     return 'development';
+  }
+  if (
+    normalized.includes('/workflow-intelligence/') ||
+    normalized.startsWith('workflow-intelligence/')
+  ) {
+    return 'workflow-intelligence';
+  }
+  if (normalized.includes('/monitor/') || normalized.startsWith('monitor/')) {
+    return 'monitor';
   }
 
   // Root files

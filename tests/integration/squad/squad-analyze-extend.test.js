@@ -15,15 +15,11 @@
 const path = require('path');
 const fs = require('fs').promises;
 const yaml = require('js-yaml');
-const {
-  SquadAnalyzer,
-} = require('../../../.aios-core/development/scripts/squad/squad-analyzer');
-const {
-  SquadExtender,
-} = require('../../../.aios-core/development/scripts/squad/squad-extender');
+const { SquadAnalyzer } = require('../../../.aios-core/development/scripts/squad/squad-analyzer');
+const { SquadExtender } = require('../../../.aios-core/development/scripts/squad/squad-extender');
 
-// Test directory for integration tests
-const INTEGRATION_PATH = path.join(__dirname, 'temp-integration');
+// Test directory for integration tests - use unique directory to avoid parallel test collisions
+const INTEGRATION_PATH = path.join(__dirname, 'temp-analyze-extend');
 
 describe('Squad Analyze & Extend Integration', () => {
   let analyzer;
@@ -76,15 +72,12 @@ describe('Squad Analyze & Extend Integration', () => {
         data: [],
       },
     };
-    await fs.writeFile(
-      path.join(testSquadPath, 'squad.yaml'),
-      yaml.dump(manifest)
-    );
+    await fs.writeFile(path.join(testSquadPath, 'squad.yaml'), yaml.dump(manifest));
 
     // Create initial agent
     await fs.writeFile(
       path.join(testSquadPath, 'agents', 'initial-agent.md'),
-      '# initial-agent\n\nInitial test agent.\n'
+      '# initial-agent\n\nInitial test agent.\n',
     );
 
     // Initialize analyzer and extender pointing to parent directory
@@ -156,10 +149,7 @@ describe('Squad Analyze & Extend Integration', () => {
       expect(content).toContain('A new agent for testing');
 
       // Verify manifest updated
-      const manifestContent = await fs.readFile(
-        path.join(testSquadPath, 'squad.yaml'),
-        'utf8'
-      );
+      const manifestContent = await fs.readFile(path.join(testSquadPath, 'squad.yaml'), 'utf8');
       expect(manifestContent).toContain('new-agent.md');
     });
 
@@ -353,10 +343,7 @@ describe('Squad Analyze & Extend Integration', () => {
       }
 
       // Verify manifest has all components
-      const manifestContent = await fs.readFile(
-        path.join(testSquadPath, 'squad.yaml'),
-        'utf8'
-      );
+      const manifestContent = await fs.readFile(path.join(testSquadPath, 'squad.yaml'), 'utf8');
       const manifest = yaml.load(manifestContent);
 
       expect(manifest.components.agents).toContain('agent-1.md');
@@ -376,7 +363,7 @@ describe('Squad Analyze & Extend Integration', () => {
 
       // Add custom content to manifest
       const manifestPath = path.join(testSquadPath, 'squad.yaml');
-      let manifest = yaml.load(await fs.readFile(manifestPath, 'utf8'));
+      const manifest = yaml.load(await fs.readFile(manifestPath, 'utf8'));
       manifest.customField = 'custom-value';
       manifest.config = { setting1: true, setting2: 'value' };
       await fs.writeFile(manifestPath, yaml.dump(manifest));

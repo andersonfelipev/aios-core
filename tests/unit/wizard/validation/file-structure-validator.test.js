@@ -4,7 +4,9 @@
  */
 
 const fs = require('fs');
-const { validateFiles } = require('../../../../src/wizard/validation/validators/file-structure-validator');
+const {
+  validateFiles,
+} = require('../../../../packages/installer/src/wizard/validation/validators/file-structure-validator');
 
 // Mock fs module
 jest.mock('fs');
@@ -82,8 +84,8 @@ describe('File Structure Validator', () => {
       );
     });
 
-    it('should return warnings when .mcp.json is missing', async () => {
-      // Given
+    it('should NOT return warnings when .mcp.json is missing (it is optional)', async () => {
+      // Given - .mcp.json is optional, should not generate warnings
       fs.existsSync.mockImplementation((path) => path !== '.mcp.json');
 
       const fileContext = {
@@ -93,14 +95,9 @@ describe('File Structure Validator', () => {
       // When
       const result = await validateFiles(fileContext);
 
-      // Then
-      expect(result.warnings).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            code: 'MCP_CONFIG_MISSING',
-          }),
-        ]),
-      );
+      // Then - no MCP_CONFIG_MISSING warning should be generated
+      const mcpWarning = result.warnings.find((w) => w.code === 'MCP_CONFIG_MISSING');
+      expect(mcpWarning).toBeUndefined();
     });
 
     it('should validate IDE config files', async () => {
@@ -115,9 +112,9 @@ describe('File Structure Validator', () => {
       const result = await validateFiles(fileContext);
 
       // Then
-      const ideChecks = result.checks.filter(c => c.component === 'IDE Config');
+      const ideChecks = result.checks.filter((c) => c.component === 'IDE Config');
       expect(ideChecks).toHaveLength(2);
-      expect(ideChecks.every(c => c.status === 'success')).toBe(true);
+      expect(ideChecks.every((c) => c.status === 'success')).toBe(true);
     });
 
     it('should handle validation errors gracefully', async () => {

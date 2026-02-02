@@ -46,28 +46,22 @@ techPreset:
 # Official framework documentation location (Story 6.11)
 # Prefer docs/en/framework/ for portable framework standards (i18n structure)
 # docs/architecture/ contains project-specific analysis and decisions
+# English docs in root, translations in /pt and /es folders
 devLoadAlwaysFiles:
   - docs/en/framework/coding-standards.md
   - docs/en/framework/tech-stack.md
   - docs/en/framework/source-tree.md
 
-# Fallback patterns for backward compatibility and alternative naming
-# These will be tried if the primary files above are not found
+# Fallback patterns for translations
 devLoadAlwaysFilesFallback:
-  # Backward compatibility - old architecture location (deprecated)
-  - docs/architecture/coding-standards.md
-  - docs/architecture/tech-stack.md
-  - docs/architecture/source-tree.md
-  # Portuguese variants
-  - docs/architecture/padroes-de-codigo.md
-  - docs/architecture/pilha-tecnologica.md
-  - docs/architecture/arvore-de-origem.md
-  # Alternative English names
-  - docs/architecture/code-standards.md
-  - docs/architecture/technology-stack.md
-  - docs/architecture/project-structure.md
-  - docs/architecture/unified-project-structure.md
-  - docs/architecture/directory-structure.md
+  # Portuguese docs
+  - docs/pt/framework/coding-standards.md
+  - docs/pt/framework/tech-stack.md
+  - docs/pt/framework/source-tree.md
+  # Spanish docs
+  - docs/es/framework/coding-standards.md
+  - docs/es/framework/tech-stack.md
+  - docs/es/framework/source-tree.md
 
 devDebugLog: .ai/debug-log.md
 devStoryLocation: docs/stories
@@ -339,7 +333,7 @@ coderabbit_integration:
   wsl_config:
     distribution: Ubuntu
     installation_path: ~/.local/bin/coderabbit
-    working_directory: /mnt/c/Users/AllFluence-User/Workspaces/AIOS/SynkraAI/aios-core
+    working_directory: ${PROJECT_ROOT}
 
   # Self-healing configuration
   self_healing:
@@ -363,9 +357,9 @@ coderabbit_integration:
   # CLI commands (WSL wrapper for Windows)
   commands:
     qa_pre_review_uncommitted: |
-      wsl bash -c 'cd /mnt/c/Users/AllFluence-User/Workspaces/AIOS/SynkraAI/aios-core && ~/.local/bin/coderabbit --prompt-only -t uncommitted'
+      wsl bash -c 'cd ${PROJECT_ROOT} && ~/.local/bin/coderabbit --prompt-only -t uncommitted'
     qa_story_review_committed: |
-      wsl bash -c 'cd /mnt/c/Users/AllFluence-User/Workspaces/AIOS/SynkraAI/aios-core && ~/.local/bin/coderabbit --prompt-only -t committed --base main'
+      wsl bash -c 'cd ${PROJECT_ROOT} && ~/.local/bin/coderabbit --prompt-only -t committed --base main'
 
   report_location: docs/qa/coderabbit-reports/
 
@@ -482,13 +476,9 @@ ideSync:
       path: .cursor/rules/agents
       format: condensed-rules
     windsurf:
-      enabled: true
+      enabled: false  # Disabled v3.10.0 - consolidating to core IDEs
       path: .windsurf/rules/agents
       format: xml-tagged-markdown
-    trae:
-      enabled: true
-      path: .trae/rules/agents
-      format: project-rules
     antigravity:
       enabled: true
       path: .antigravity/rules/agents
@@ -503,3 +493,49 @@ ideSync:
     strictMode: true
     failOnDrift: true
     failOnOrphaned: false
+
+# ============================================
+# SECTION 13: Auto-Claude Configuration (ADE)
+# Autonomous Development Engine settings
+# ============================================
+autoClaude:
+  enabled: true
+  version: "3.0"
+  migratedAt: "2026-01-29T02:25:00Z"
+
+  # Worktree Management (Story 1.4)
+  # Controls automatic worktree creation/cleanup for stories
+  worktree:
+    enabled: true
+    # When to auto-create worktree:
+    # - on_story_start: Auto-create when story moves to "In Progress"
+    # - manual: Only create via explicit command
+    # - never: Disable auto-creation
+    autoCreate: on_story_start
+
+    # When to auto-cleanup worktree:
+    # - on_story_done: Auto-cleanup when story moves to "Done" (if clean)
+    # - manual: Only cleanup via explicit command
+    # - never: Keep worktrees indefinitely
+    autoCleanup: manual
+
+    # Maximum concurrent worktrees (prevents disk bloat)
+    maxWorktrees: 10
+
+    # Days after which a worktree is considered stale
+    staleDays: 30
+
+    # Branch prefix for worktree branches
+    branchPrefix: "auto-claude/"
+
+  # Spec Pipeline (Story 3.x - Future)
+  specPipeline:
+    enabled: false
+
+  # Execution Engine (Story 4.x - Future)
+  execution:
+    enabled: false
+
+  # QA Integration (Story 5.x - Future)
+  qa:
+    enabled: false

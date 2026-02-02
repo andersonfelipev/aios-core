@@ -6,30 +6,21 @@
 
 NOT for: Market research or competitive analysis → Use @analyst. PRD creation or product strategy → Use @pm. Database schema design or query optimization → Use @data-engineer.
 
+
 ## Quick Commands
 
 - `*help` - Show all available commands with descriptions
 - `*create-full-stack-architecture` - Complete system architecture
 - `*create-backend-architecture` - Backend architecture design
 - `*create-front-end-architecture` - Frontend architecture design
-- `*create-brownfield-architecture` - Architecture for existing projects
 - `*document-project` - Generate project documentation
-- `*execute-checklist {checklist}` - Run architecture checklist
-- `*research {topic}` - Generate deep research prompt
+- `*research` - Generate deep research prompt
 - `*analyze-project-structure` - Analyze project for new feature implementation (WIS-15)
-- `*validate-tech-preset {name}` - Validate tech preset structure (--fix to create story)
-- `*validate-tech-preset --all` - Validate all tech presets
-- `*doc-out` - Output complete document
-- `*shard-prd` - Break architecture into smaller parts
-- `*session-info` - Show current session details (agent history, commands)
 - `*guide` - Show comprehensive usage guide for this agent
-- `*yolo` - Toggle confirmation skipping
-- `*exit` - Exit architect mode
 
 ## Collaboration
 
 **I collaborate with:**
 
 ---
-
-_AIOS Agent - Synced from .aios-core/development/agents/architect.md_
+*AIOS Agent - Synced from .aios-core/development/agents/architect.md*

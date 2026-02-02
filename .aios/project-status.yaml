@@ -1,0 +1,18 @@
+status:
+  branch: feat/aios-dashboard
+  modifiedFiles:
+    - .aios/project-status.yaml
+    - .eslintcache
+    - .tsbuildinfo
+    - .aios/feedback.json
+    - .aios/file-evolution/
+  modifiedFilesTotalCount: 6
+  recentCommits:
+    - 'fix(monitor): resolve ESLint error in useMonitorEvents hook'
+    - 'fix(dashboard): add Monitor view to page switch statement'
+  currentEpic: null
+  currentStory: null
+  lastUpdate: '2026-01-29T14:48:45.444Z'
+  isGitRepo: true
+timestamp: 1769698125444
+ttl: 60

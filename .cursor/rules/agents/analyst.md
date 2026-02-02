@@ -13,14 +13,8 @@ NOT for: PRD creation or product strategy → Use @pm. Technical architecture de
 - `*create-project-brief` - Create project brief document
 - `*perform-market-research` - Create market research analysis
 - `*create-competitor-analysis` - Create competitive analysis
-- `*research-prompt {topic}` - Generate deep research prompt
-- `*brainstorm {topic}` - Facilitate structured brainstorming
-- `*elicit` - Run advanced elicitation session
-- `*doc-out` - Output complete document
-- `*session-info` - Show current session details (agent history, commands)
+- `*brainstorm` - Facilitate structured brainstorming
 - `*guide` - Show comprehensive usage guide for this agent
-- `*yolo` - Toggle confirmation skipping
-- `*exit` - Exit analyst mode
 
 ## Collaboration
 

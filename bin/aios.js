@@ -422,20 +422,27 @@ AIOS-FullStack v${packageJson.version}
 AI-Orchestrated System for Full Stack Development
 
 USAGE:
-  npx aios-core                        # Run installation wizard
-  npx aios-core install                # Install in current project
-  npx aios-core init <name>            # Create new project
-  npx aios-core update [options]       # Update to latest version
-  npx aios-core info                   # Show system info
-  npx aios-core doctor                 # Run diagnostics
-  npx aios-core --version              # Show version
-  npx aios-core --help                 # Show this help
+  npx @synkra/aios-core@latest              # Run installation wizard
+  npx @synkra/aios-core@latest install      # Install in current project
+  npx @synkra/aios-core@latest init <name>  # Create new project
+  npx @synkra/aios-core@latest update       # Update to latest version
+  npx @synkra/aios-core@latest validate     # Validate installation integrity
+  npx @synkra/aios-core@latest info         # Show system info
+  npx @synkra/aios-core@latest doctor       # Run diagnostics
+  npx @synkra/aios-core@latest --version    # Show version
+  npx @synkra/aios-core@latest --help       # Show this help
 
 UPDATE OPTIONS:
   --repo=<user/repo>    GitHub repository (default: detected from git remote)
   --branch=<name>       Branch to pull from (default: main)
   --force               Overwrite all files including configurations
   --dry-run             Show what would change without applying
+
+VALIDATION:
+  aios validate                    # Validate installation integrity
+  aios validate --repair           # Repair missing/corrupted files
+  aios validate --repair --dry-run # Preview repairs
+  aios validate --detailed         # Show detailed file list
 
 SERVICE DISCOVERY:
   aios workers search <query>            # Search for workers
@@ -498,6 +505,54 @@ function showInfo() {
   }
 }
 
+// Helper: Run installation validation
+async function runValidate() {
+  const validateArgs = args.slice(1); // Remove 'validate' from args
+
+  try {
+    // Load the validate command module
+    const { createValidateCommand } = require('../.aios-core/cli/commands/validate/index.js');
+    const validateCmd = createValidateCommand();
+
+    // Parse and execute
+    await validateCmd.parseAsync(['node', 'aios', 'validate', ...validateArgs]);
+  } catch (_error) {
+    // Fallback: Run quick validation inline
+    console.log('Running installation validation...\n');
+
+    try {
+      const validatorPath = path.join(
+        __dirname,
+        '..',
+        'src',
+        'installer',
+        'post-install-validator.js',
+      );
+      const { PostInstallValidator, formatReport } = require(validatorPath);
+
+      const projectRoot = process.cwd();
+      const validator = new PostInstallValidator(projectRoot, path.join(__dirname, '..'));
+      const report = await validator.validate();
+
+      console.log(formatReport(report, { colors: true }));
+
+      if (
+        report.status === 'failed' ||
+        report.stats.missingFiles > 0 ||
+        report.stats.corruptedFiles > 0
+      ) {
+        process.exit(1);
+      }
+    } catch (validatorError) {
+      console.error(`❌ Validation error: ${validatorError.message}`);
+      if (args.includes('--verbose') || args.includes('-v')) {
+        console.error(validatorError.stack);
+      }
+      process.exit(2);
+    }
+  }
+}
+
 // Helper: Run doctor diagnostics
 function runDoctor() {
   console.log('🏥 AIOS System Diagnostics\n');
@@ -521,7 +576,7 @@ function runDoctor() {
   const nodeOk = compareVersions(nodeVersion, requiredNodeVersion) >= 0;
 
   console.log(
-    `${nodeOk ? '✔' : '✗'} Node.js version: ${process.version} ${nodeOk ? '(meets requirement: >=18.0.0)' : '(requires >=18.0.0)'}`
+    `${nodeOk ? '✔' : '✗'} Node.js version: ${process.version} ${nodeOk ? '(meets requirement: >=18.0.0)' : '(requires >=18.0.0)'}`,
   );
   if (!nodeOk) hasErrors = true;
 
@@ -570,23 +625,36 @@ async function initProject(projectName) {
     process.exit(1);
   }
 
-  console.log(`🚀 Creating new AIOS project: ${projectName}\n`);
+  // Handle "." to install in current directory
+  const isCurrentDir = projectName === '.';
+  const targetPath = isCurrentDir ? process.cwd() : path.join(process.cwd(), projectName);
+  const displayName = isCurrentDir ? path.basename(process.cwd()) : projectName;
 
-  const targetPath = path.join(process.cwd(), projectName);
+  console.log(`Creating new AIOS project: ${displayName}\n`);
 
   // Check if directory exists
   if (fs.existsSync(targetPath)) {
-    console.error(`❌ Directory already exists: ${projectName}`);
-    console.log('Use a different name or remove the existing directory.');
-    process.exit(1);
+    // Allow if directory is empty or only has hidden files
+    const contents = fs.readdirSync(targetPath).filter((f) => !f.startsWith('.'));
+    if (contents.length > 0 && !isCurrentDir) {
+      console.error(`❌ Directory already exists and is not empty: ${projectName}`);
+      console.log('Use a different name or remove the existing directory.');
+      process.exit(1);
+    }
+    // Directory exists but is empty or is current dir - proceed
+    if (!isCurrentDir) {
+      console.log(`✓ Using existing empty directory: ${projectName}`);
+    }
+  } else {
+    // Create project directory
+    fs.mkdirSync(targetPath, { recursive: true });
+    console.log(`✓ Created directory: ${projectName}`);
   }
 
-  // Create project directory
-  fs.mkdirSync(targetPath, { recursive: true });
-  console.log(`✓ Created directory: ${projectName}`);
-
-  // Change to project directory
-  process.chdir(targetPath);
+  // Change to project directory (if not already there)
+  if (!isCurrentDir) {
+    process.chdir(targetPath);
+  }
 
   // Run the initialization wizard
   await runWizard();
@@ -608,7 +676,7 @@ async function main() {
 
     case 'install':
       // Install in current project
-      console.log('🚀 AIOS-FullStack Installation\n');
+      console.log('AIOS-FullStack Installation\n');
       await runWizard();
       break;
 
@@ -631,6 +699,11 @@ async function main() {
       await runUpdate();
       break;
 
+    case 'validate':
+      // Post-installation validation - Story 6.19
+      await runValidate();
+      break;
+
     case '--version':
     case '-v':
     case '-V':
@@ -644,7 +717,7 @@ async function main() {
 
     case undefined:
       // No arguments - run wizard directly (npx default behavior)
-      console.log('🚀 AIOS-FullStack Installation\n');
+      console.log('AIOS-FullStack Installation\n');
       await runWizard();
       break;
 

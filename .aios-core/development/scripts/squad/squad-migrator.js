@@ -154,7 +154,7 @@ class SquadMigrator {
       throw new SquadMigratorError(
         MigratorErrorCodes.SQUAD_NOT_FOUND,
         `Squad directory not found: ${squadPath}`,
-        { squadPath }
+        { squadPath },
       );
     }
 
@@ -173,7 +173,7 @@ class SquadMigrator {
       throw new SquadMigratorError(
         MigratorErrorCodes.NO_MANIFEST,
         'No manifest found (config.yaml or squad.yaml)',
-        { squadPath }
+        { squadPath },
       );
     }
 
@@ -294,7 +294,7 @@ class SquadMigrator {
         throw new SquadMigratorError(
           MigratorErrorCodes.MIGRATION_FAILED,
           `Invalid YAML in manifest: ${error.message}`,
-          { squadPath, error: error.message }
+          { squadPath, error: error.message },
         );
       }
       throw error;
@@ -333,13 +333,13 @@ class SquadMigrator {
         await this._copyRecursive(src, dest);
       }
 
-      this._log(`Backup created successfully`);
+      this._log('Backup created successfully');
       return backupPath;
     } catch (error) {
       throw new SquadMigratorError(
         MigratorErrorCodes.BACKUP_FAILED,
         `Failed to create backup: ${error.message}`,
-        { squadPath, error: error.message }
+        { squadPath, error: error.message },
       );
     }
   }
@@ -355,10 +355,7 @@ class SquadMigrator {
 
     switch (action.type) {
       case 'RENAME_MANIFEST':
-        await fs.rename(
-          path.join(squadPath, action.from),
-          path.join(squadPath, action.to)
-        );
+        await fs.rename(path.join(squadPath, action.from), path.join(squadPath, action.to));
         break;
 
       case 'CREATE_DIRECTORIES':
@@ -372,17 +369,14 @@ class SquadMigrator {
         break;
 
       case 'MOVE_FILE':
-        await fs.rename(
-          path.join(squadPath, action.from),
-          path.join(squadPath, action.to)
-        );
+        await fs.rename(path.join(squadPath, action.from), path.join(squadPath, action.to));
         break;
 
       default:
         throw new SquadMigratorError(
           MigratorErrorCodes.MIGRATION_FAILED,
           `Unknown action type: ${action.type}`,
-          { action }
+          { action },
         );
     }
   }
@@ -576,7 +570,8 @@ class SquadMigrator {
         lines.push('');
         lines.push('  Executed Actions:');
         for (const action of result.actions) {
-          const icon = action.status === 'success' ? '✅' : action.status === 'dry-run' ? '🔍' : '❌';
+          const icon =
+            action.status === 'success' ? '✅' : action.status === 'dry-run' ? '🔍' : '❌';
           lines.push(`    ${icon} ${this._formatAction(action)} [${action.status}]`);
           if (action.error) {
             lines.push(`       Error: ${action.error}`);

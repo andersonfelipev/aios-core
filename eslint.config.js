@@ -24,6 +24,8 @@ module.exports = [
       '**/*.min.js',
       '**/aios-core/*.js',
       '**/templates/squad/**',
+      // Squad template - ES modules with placeholder imports
+      '.aios-core/development/templates/squad-template/**',
       // ESM bundle files - auto-generated
       '**/*.esm.js',
       '**/index.esm.js',
@@ -45,6 +47,10 @@ module.exports = [
       '.aios-core/product/templates/**',
       // Health Dashboard - uses Vite/React with ES modules
       'tools/health-dashboard/**',
+      // Apps with their own ESLint configs
+      'apps/dashboard/**',
+      // Bun-based apps (different runtime, different globals)
+      'apps/monitor-server/**',
     ],
   },
 
@@ -94,6 +100,7 @@ module.exports = [
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
         },
       ],
       'no-undef': 'error',

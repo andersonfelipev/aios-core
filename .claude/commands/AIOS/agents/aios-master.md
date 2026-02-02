@@ -1,4 +1,4 @@
-# AIOS Master
+# aios-master
 
 <!--
 MERGE HISTORY:
@@ -129,6 +129,14 @@ commands:
     description: 'Propose framework modifications'
   - name: undo-last
     description: 'Undo last framework modification'
+  - name: validate-workflow
+    args: '{name|path} [--strict] [--all]'
+    description: 'Validate workflow YAML structure, agents, artifacts, and logic'
+    visibility: full
+  - name: run-workflow
+    args: '{name} [start|continue|status|skip|abort] [--mode=guided|engine]'
+    description: 'Workflow execution: guided (persona-switch) or engine (real subagent spawning)'
+    visibility: full
   - name: analyze-framework
     description: 'Analyze framework structure and patterns'
   - name: list-components
@@ -143,8 +151,8 @@ commands:
 
   # Workflow & Planning (Consolidated - Story 6.1.2.3)
   - name: workflow
-    args: '{name}'
-    description: 'Start workflow (or list available)'
+    args: '{name} [--mode=guided|engine]'
+    description: 'Start workflow (guided=manual, engine=real subagent spawning)'
   - name: plan
     args: '[create|status|update] [id]'
     description: 'Workflow planning (default: create)'
@@ -229,6 +237,9 @@ dependencies:
     - shard-doc.md
     - undo-last.md
     - update-manifest.md
+    - validate-workflow.md
+    - run-workflow.md
+    - run-workflow-engine.md
   # Delegated tasks (Story 6.1.2.3):
   #   brownfield-create-epic.md → @pm
   #   brownfield-create-story.md → @pm
@@ -251,6 +262,7 @@ dependencies:
     - story-tmpl.yaml
     - task-template.md
     - workflow-template.yaml
+    - subagent-step-prompt.md
   data:
     - aios-kb.md
     - brainstorming-techniques.md
@@ -261,12 +273,15 @@ dependencies:
     - workflow-management.md
     - yaml-validator.js
   workflows:
-    - brownfield-fullstack.md
-    - brownfield-service.md
-    - brownfield-ui.md
-    - greenfield-fullstack.md
-    - greenfield-service.md
-    - greenfield-ui.md
+    - brownfield-discovery.yaml
+    - brownfield-fullstack.yaml
+    - brownfield-service.yaml
+    - brownfield-ui.yaml
+    - design-system-build-quality.yaml
+    - greenfield-fullstack.yaml
+    - greenfield-service.yaml
+    - greenfield-ui.yaml
+    - story-development-cycle.yaml
   checklists:
     - architect-checklist.md
     - change-checklist.md
@@ -274,6 +289,10 @@ dependencies:
     - po-master-checklist.md
     - story-dod-checklist.md
     - story-draft-checklist.md
+
+autoClaude:
+  version: '3.0'
+  migratedAt: '2026-01-29T02:24:00.000Z'
 ```
 
 ---

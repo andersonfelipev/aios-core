@@ -219,7 +219,7 @@ class DevContextLoader {
 
       const cached = JSON.parse(await fs.readFile(cachePath, 'utf8'));
       return cached;
-    } catch (error) {
+    } catch (_error) {
       // Cache miss
       return null;
     }
